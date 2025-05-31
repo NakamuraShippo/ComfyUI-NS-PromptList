@@ -1,13 +1,13 @@
 [project]
-name = "comfyui-promptlist"
-description = "Custom node to manage prompts in YAML format."
-version = "1.2.3"
+name = "comfyui-NS-promptlist"
+description = "CustomNode to manage prompts in YAML format."
+version = "2.0.0"
 license = { file = "LICENSE.txt" }
 
 [project.urls]
-Repository = "https://github.com/NakamuraShippo/ComfyUI-PromptList"
+Repository = "https://github.com/NakamuraShippo/ComfyUI-NS-PromptList"
 
 [tool.comfy]
 PublisherId = "nakamurashippo"
-DisplayName = "ComfyUI-PromptList"
+DisplayName = "ComfyUI-NS-PromptList"
 Icon = ""

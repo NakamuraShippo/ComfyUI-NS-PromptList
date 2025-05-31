@@ -1,0 +1,31 @@
+abstract_art:
+  prompt: 'abstract digital art, vibrant colors, geometric shapes,
+
+    fluid dynamics, modern composition, high contrast,
+
+    artistic expression, gallery quality'
+anime_character:
+  prompt: 'anime style character, colorful hair, big expressive eyes,
+
+    detailed clothing, dynamic pose, studio lighting,
+
+    high quality illustration
+
+    '
+cyberpunk_city:
+  prompt: 'futuristic cyberpunk cityscape, neon lights,
+
+    rain-slicked streets, towering skyscrapers,
+
+    flying vehicles, atmospheric fog, night scene
+
+    '
+landscape_sunset:
+  prompt: 'golden hour landscape photography, dramatic clouds,
+
+    vibrant orange and purple sky, silhouetted trees,
+
+    wide angle lens, high dynamic range
+
+    '
+

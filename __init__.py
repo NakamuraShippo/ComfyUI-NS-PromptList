@@ -1,21 +1,10 @@
 """
-@author: NakamuraShippo
-@title: ComfyUI-PromptList
-@description: Custom node to manage prompts in YAML format.
+ComfyUI-NS-PromptList
+A ComfyUI custom node for managing prompts with YAML files
 """
 
-from .ComfyUI_PromptList import ComfyUI_PromptList
+from .prompt_list_node import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
 
-NODE_CLASS_MAPPINGS = {
-    "ComfyUI-PromptList": ComfyUI_PromptList
-}
-
-NODE_DISPLAY_NAME_MAPPINGS = {
-    "ComfyUI-PromptList": "Prompt List"
-}
+__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
 
 WEB_DIRECTORY = "./web"
-
-print("ComfyUI-PromptList initialized")
-
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]

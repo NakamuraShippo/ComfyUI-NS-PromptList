@@ -15,6 +15,9 @@ function findWidget(node, name) {
 
 // Helper to refresh node display
 function refreshNode(node) {
+    // Save current size
+    const currentSize = [...node.size];
+    
     if (ComfyWidgets?.refreshNode) {
         ComfyWidgets.refreshNode(node);
     } else {
@@ -22,6 +25,12 @@ function refreshNode(node) {
         const size = node.computeSize();
         node.setSize(size);
         app.graph.setDirtyCanvas(true, true);
+    }
+    
+    // Restore size if it got smaller
+    if (node.size[0] < currentSize[0] || node.size[1] < currentSize[1]) {
+        node.size[0] = Math.max(node.size[0], currentSize[0]);
+        node.size[1] = Math.max(node.size[1], currentSize[1]);
     }
 }
 
@@ -45,18 +54,31 @@ function setupSocketListeners() {
     api.addEventListener("ns_promptlist_set_widgets", (event) => {
         const data = event.detail;
         
-        // Update all NS-PromptList nodes
-        app.graph._nodes.forEach(node => {
-            if (node.type === "NS-PromptList") {
-                const titleWidget = findWidget(node, "title");
-                const promptWidget = findWidget(node, "prompt");
-                
-                if (titleWidget) titleWidget.value = data.title || "";
-                if (promptWidget) promptWidget.value = data.prompt || "";
-                
-                refreshNode(node);
-            }
-        });
+        // Find the active node (the one being edited)
+        const activeNode = app.canvas.node_over || app.canvas.selected_nodes?.[0];
+        
+        if (activeNode && activeNode.type === "NS-PromptList") {
+            const titleWidget = findWidget(activeNode, "title");
+            const promptWidget = findWidget(activeNode, "prompt");
+            
+            if (titleWidget) titleWidget.value = data.title || "";
+            if (promptWidget) promptWidget.value = data.prompt || "";
+            
+            refreshNode(activeNode);
+        } else {
+            // If no active node, update all (fallback)
+            app.graph._nodes.forEach(node => {
+                if (node.type === "NS-PromptList") {
+                    const titleWidget = findWidget(node, "title");
+                    const promptWidget = findWidget(node, "prompt");
+                    
+                    if (titleWidget) titleWidget.value = data.title || "";
+                    if (promptWidget) promptWidget.value = data.prompt || "";
+                    
+                    refreshNode(node);
+                }
+            });
+        }
     });
 }
 
@@ -156,14 +178,18 @@ function hookSelectChange(node) {
 }
 
 // Request prompt data from backend
-async function requestPromptData(yamlFile, title) {
+async function requestPromptData(yamlFile, title, nodeId = null) {
     if (!yamlFile || !title) return;
     
     try {
         await api.fetchApi("/ns_promptlist/get_prompt", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ yaml: yamlFile, title: title })
+            body: JSON.stringify({ 
+                yaml: yamlFile, 
+                title: title,
+                node_id: nodeId 
+            })
         });
     } catch (error) {
         console.error("Error fetching prompt data:", error);
@@ -204,6 +230,16 @@ app.registerExtension({
     
     async nodeCreated(node) {
         if (node.type === "NS-PromptList") {
+            // Set minimum size for the node
+            node.size = [400, 300];
+            node.computeSize = function() {
+                const size = LGraphNode.prototype.computeSize.apply(this, arguments);
+                // Ensure minimum width and height
+                size[0] = Math.max(size[0], 400);
+                size[1] = Math.max(size[1], 300);
+                return size;
+            };
+            
             // Add delete button
             const deleteButton = node.addWidget("button", "delete_title", "", () => {
                 const yamlWidget = findWidget(node, "select_yaml");

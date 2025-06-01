@@ -13,13 +13,13 @@ ComfyUI-NS-PromptList is a simple prompt management node for [ComfyUI](https://g
 If you have [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager) installed:
 1. Click Manager -> Install via Git URL from the main menu
 2. Paste the URL in the text box that appears at the top of the window and press OK  
-   https://github.com/NakamuraShippo/ComfyUI-PromptList
+   https://github.com/NakamuraShippo/ComfyUI-NS-PromptList
 3. Once the installation is complete, restart ComfyUI
 
 If you don't have [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager) installed:
 1. Navigate to ComfyUI's custom nodes directory (usually ComfyUI/custom_nodes/)
 2. Clone this repository:  
-`git clone https://github.com/NakamuraShippo/ComfyUI-PromptList`
+`git clone https://github.com/NakamuraShippo/ComfyUI-NS-PromptList`
 3. Restart ComfyUI
 4. In ComfyUI\venv\Scripts, Shift+Right-click → Open in terminal -> type "activate"
 ```

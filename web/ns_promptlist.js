@@ -53,31 +53,33 @@ function setupSocketListeners() {
     // Listen for widget updates
     api.addEventListener("ns_promptlist_set_widgets", (event) => {
         const data = event.detail;
+        const targetNodeId = data.node_id;
         
-        // Find the active node (the one being edited)
-        const activeNode = app.canvas.node_over || app.canvas.selected_nodes?.[0];
-        
-        if (activeNode && activeNode.type === "NS-PromptList") {
-            const titleWidget = findWidget(activeNode, "title");
-            const promptWidget = findWidget(activeNode, "prompt");
-            
-            if (titleWidget) titleWidget.value = data.title || "";
-            if (promptWidget) promptWidget.value = data.prompt || "";
-            
-            refreshNode(activeNode);
+        // Only update the specific node if node_id is provided
+        if (targetNodeId) {
+            const targetNode = app.graph._nodes.find(n => n.id === targetNodeId);
+            if (targetNode && targetNode.type === "NS-PromptList") {
+                const titleWidget = findWidget(targetNode, "title");
+                const promptWidget = findWidget(targetNode, "prompt");
+                
+                if (titleWidget) titleWidget.value = data.title || "";
+                if (promptWidget) promptWidget.value = data.prompt || "";
+                
+                refreshNode(targetNode);
+            }
         } else {
-            // If no active node, update all (fallback)
-            app.graph._nodes.forEach(node => {
-                if (node.type === "NS-PromptList") {
-                    const titleWidget = findWidget(node, "title");
-                    const promptWidget = findWidget(node, "prompt");
-                    
-                    if (titleWidget) titleWidget.value = data.title || "";
-                    if (promptWidget) promptWidget.value = data.prompt || "";
-                    
-                    refreshNode(node);
-                }
-            });
+            // Fallback: update active node only
+            const activeNode = app.canvas.node_over || app.canvas.selected_nodes?.[0];
+            
+            if (activeNode && activeNode.type === "NS-PromptList") {
+                const titleWidget = findWidget(activeNode, "title");
+                const promptWidget = findWidget(activeNode, "prompt");
+                
+                if (titleWidget) titleWidget.value = data.title || "";
+                if (promptWidget) promptWidget.value = data.prompt || "";
+                
+                refreshNode(activeNode);
+            }
         }
     });
 }
@@ -101,24 +103,33 @@ function updateNodeEnums(node) {
     const selectWidget = findWidget(node, "select");
     
     if (yamlWidget && promptListStore.yamlFiles.length > 0) {
+        // Update YAML options
+        const currentYaml = yamlWidget.value;
         yamlWidget.options.values = promptListStore.yamlFiles;
-        if (!promptListStore.yamlFiles.includes(yamlWidget.value)) {
+        
+        // Keep current selection if it still exists
+        if (promptListStore.yamlFiles.includes(currentYaml)) {
+            yamlWidget.value = currentYaml;
+        } else {
             yamlWidget.value = promptListStore.yamlFiles[0];
         }
     }
     
     if (selectWidget && yamlWidget) {
+        // Update title options based on current YAML
+        const currentTitle = selectWidget.value;
         const titles = promptListStore.titlesByYaml[yamlWidget.value] || [""];
         selectWidget.options.values = titles;
         
-        // If current value is not in the list, select first available title
-        if (!titles.includes(selectWidget.value) || selectWidget.value === "") {
-            selectWidget.value = titles[0] || "";
-            
-            // Auto-fetch prompt for the first title
-            if (titles[0] && titles[0] !== "") {
-                requestPromptData(yamlWidget.value, titles[0]);
-            }
+        // Keep current selection if it still exists
+        if (titles.includes(currentTitle)) {
+            selectWidget.value = currentTitle;
+        } else if (titles[0] && titles[0] !== "") {
+            selectWidget.value = titles[0];
+            // Fetch prompt for the new selection
+            requestPromptData(yamlWidget.value, titles[0], node.id);
+        } else {
+            selectWidget.value = "";
         }
     }
     
@@ -144,7 +155,7 @@ function hookSelectChange(node) {
                 originalYamlCallback.call(this, value);
             }
             
-            // Update title options
+            // Update title options for this specific node
             const titles = promptListStore.titlesByYaml[value] || [""];
             if (selectWidget) {
                 selectWidget.options.values = titles;
@@ -153,7 +164,7 @@ function hookSelectChange(node) {
                 
                 // If we have a title, fetch its prompt
                 if (titles[0]) {
-                    requestPromptData(value, titles[0]);
+                    requestPromptData(value, titles[0], node.id);
                 }
             }
             
@@ -169,9 +180,9 @@ function hookSelectChange(node) {
                 originalSelectCallback.call(this, value);
             }
             
-            // Fetch prompt data
+            // Fetch prompt data for this specific node
             if (value) {
-                requestPromptData(yamlWidget?.value || "", value);
+                requestPromptData(yamlWidget?.value || "", value, node.id);
             }
         };
     }
@@ -264,7 +275,7 @@ app.registerExtension({
                     
                     if (titles && titles.length > 0 && titles[0] !== "") {
                         selectWidget.value = titles[0];
-                        requestPromptData(currentYaml, titles[0]);
+                        requestPromptData(currentYaml, titles[0], node.id);
                     }
                 }
             }, 100);

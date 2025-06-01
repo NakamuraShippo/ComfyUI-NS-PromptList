@@ -184,8 +184,11 @@ class NS_PromptList:
             data = await request.json()
             yaml_file = data.get("yaml", "")
             title = data.get("title", "")
+            node_id = data.get("node_id", None)
             
             response_data = self._get_prompt_data(yaml_file, title)
+            # Include node_id in response
+            response_data["node_id"] = node_id
             
             # Send via websocket
             if hasattr(server, 'send_sync'):

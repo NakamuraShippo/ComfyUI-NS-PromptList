@@ -1,0 +1,5 @@
+pony_negative:
+  prompt: score_6up,score_5up,score_4up,score_3up,score_2up,score_1up,(worst quality,low
+    quality:1.5),disfigured, bad anatomy, draft, deformed hands, fused fingers,
+pony_positive:
+  prompt: score_9, score_8_up, score_7_up, [anime style:source_anime:10],

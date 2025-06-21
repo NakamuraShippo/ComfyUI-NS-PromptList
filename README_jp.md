@@ -1,4 +1,4 @@
-# ComfyUI-PromptList
+# ComfyUI-NS-PromptList
 ComfyUI-PromptListは、[ComfyUI](https://github.com/comfyanonymous/ComfyUI)用のyamlに記録したプロンプトを出力するシンプルなプロンプト管理ノードです。
 
 ## 機能

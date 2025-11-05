@@ -15,23 +15,38 @@ function findWidget(node, name) {
 
 // Helper to refresh node display
 function refreshNode(node) {
-    // Save current size
-    const currentSize = [...node.size];
-    
+    if (!node) return;
+
+    const previousSize = Array.isArray(node.size) ? [...node.size] : null;
+
     if (ComfyWidgets?.refreshNode) {
         ComfyWidgets.refreshNode(node);
     } else {
-        // Fallback refresh method
-        const size = node.computeSize();
-        node.setSize(size);
+        const size = node.computeSize?.();
+        if (Array.isArray(size)) {
+            if (typeof node.setSize === "function") {
+                node.setSize(size);
+            } else {
+                node.size = [...size];
+            }
+        }
         app.graph.setDirtyCanvas(true, true);
     }
-    
-    // Restore size if it got smaller
-    if (node.size[0] < currentSize[0] || node.size[1] < currentSize[1]) {
-        node.size[0] = Math.max(node.size[0], currentSize[0]);
-        node.size[1] = Math.max(node.size[1], currentSize[1]);
+
+    if (!previousSize) return;
+
+    const targetSize = [previousSize[0], previousSize[1]];
+
+    if (typeof node.setSize === "function") {
+        node.setSize(targetSize);
+    } else if (Array.isArray(node.size)) {
+        node.size[0] = targetSize[0];
+        node.size[1] = targetSize[1];
+    } else {
+        node.size = [...targetSize];
     }
+
+    app.graph.setDirtyCanvas(true, true);
 }
 
 // Setup socket listeners

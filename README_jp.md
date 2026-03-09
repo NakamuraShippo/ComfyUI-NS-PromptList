@@ -1,4 +1,12 @@
 # ComfyUI-NS-PromptList
+このリポジトリは更新終了し、[ComfyUI-NS-Util](https://github.com/NakamuraShippo/ComfyUI-NS-Util)に統合しました。  
+
+<br>
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<br>
+
 ComfyUI-PromptListは、[ComfyUI](https://github.com/comfyanonymous/ComfyUI)用のyamlに記録したプロンプトを出力するシンプルなプロンプト管理ノードです。
 
 ## 機能

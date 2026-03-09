@@ -1,10 +1,13 @@
 # ComfyUI-NS-PromptList
 [日本語README](https://github.com/NakamuraShippo/ComfyUI-NS-PromptList/blob/main/README_jp.md)
 
-This repository is no longer being updated and has been merged into ComfyUI-NS-Util.
-[ComfyUI-NS-Util](https://github.com/NakamuraShippo/ComfyUI-NS-Util)  
+This repository is no longer being updated and has been merged into [ComfyUI-NS-Util](https://github.com/NakamuraShippo/ComfyUI-NS-Util).  
 
-////////////////////////////////////////////////////////////////////////////////////
+<br>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<br>
 
 ComfyUI-NS-PromptList is a simple prompt management node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) that outputs prompts recorded in .yaml.
 
